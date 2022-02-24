@@ -314,6 +314,9 @@ type key int
 const clientCertKey key = 0
 
 func (p ProxyHTTPHandler) doProxy(ctx context.Context, r *http.Request) (*http.Response, error) {
+	if !r.URL.IsAbs() && r.URL.Path == "/" {
+		return nil, &proxyError{statusCode: http.StatusOK, message: "", errorCode: InvalidRequestURI}
+	}
 	if !r.URL.IsAbs() {
 		return nil, &proxyError{statusCode: http.StatusBadRequest, message: "Request URI must be absolute", errorCode: InvalidRequestURI}
 	}
